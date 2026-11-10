@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#9b2d2b">
-<title>Made by Camis | Sorteio do buquê</title>
+<title>Made by Camis | Sorteios da Feira de Marketing</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;600&family=Jost:wght@400;500;600&family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&display=swap" rel="stylesheet">
 <style>
@@ -93,6 +93,36 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(-
 #fx{position:fixed;inset:0;pointer-events:none;z-index:5}
 @media(max-width:700px){.admin-grid{grid-template-columns:1fr}.tela-fl{display:none}}
 @media(prefers-reduced-motion:reduce){.stage.win{animation:none}}
+
+/* Melhorias para a feira: dois prêmios, cadastro opcional e painel com fundo vinho */
+.registro .optional{font-weight:400;color:var(--muted);font-size:13px}
+.registro .photo{position:relative}
+.registro .remove-photo{display:block;margin:8px auto 0;color:var(--red);background:transparent;border:1px solid var(--pink);padding:8px 13px;border-radius:999px;font-size:13px}
+.registro .consent-note{font-size:12px;color:var(--muted);line-height:1.5;margin:10px 0 0}
+.admin-grid{grid-template-columns: minmax(0,1.1fr) minmax(0,1fr);align-items:start}
+.admin-card .metric-line{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap}
+.admin-card .metric-small{color:var(--muted);font-size:14px;margin-bottom:12px}
+.admin-card .status-line{font-size:15px;color:var(--muted);line-height:1.6}
+.admin-card .prize-card{background:#fff9f2;border:1px solid #eed5ce;border-radius:18px;padding:16px;margin-top:15px}
+.prize-title{display:flex;align-items:center;gap:8px;justify-content:space-between;flex-wrap:wrap;font-family:'Playfair Display',serif;color:var(--red);font-weight:600;font-size:21px}
+.prize-winner{color:var(--ink);font-size:16px;margin:10px 0 12px;overflow-wrap:anywhere}
+.prize-actions{display:flex;flex-wrap:wrap;gap:8px}
+.prize-actions button{flex:1;min-width:130px;margin:0!important;padding:11px 13px!important;font-size:14px!important}
+.status-pill{border-radius:99px;padding:4px 9px;background:#f6e1db;color:#7a3a39;font:600 11px Jost,system-ui}
+.status-pill.done{background:#e2efcc;color:#42531e}
+.admin-card .outline{border:1px solid var(--red);border-radius:999px;background:transparent;color:var(--red);font-weight:600}
+.admin-card .btn-encerrar{border:1px solid #ad5752;color:var(--red);background:transparent;border-radius:99px;padding:10px 16px;font-size:14px;cursor:pointer}
+#resumoPremios{font-size:14px;color:var(--muted)}
+.historico{font-size:13px;color:var(--muted);margin:10px 0 0;padding-left:20px;max-height:135px;overflow:auto}
+.photo-fallback{display:flex;flex-direction:column;gap:10px;align-items:center;justify-content:center;width:100%;height:100%;background:#fdf4e7;color:var(--red);padding:12px;text-align:center}
+.photo-fallback svg{width:95px;height:95px}
+.photo-fallback span{font-family:'Dancing Script',cursive;font-size:clamp(17px,3vh,26px)}
+.gallery-item .photo-fallback{height:102px;gap:1px}
+.gallery-item .photo-fallback svg{width:45px;height:45px}
+.gallery-item .photo-fallback span{font-size:14px}
+.tela-premio{position:relative;z-index:1;color:var(--gold);font-weight:600;font-size:clamp(18px,3vh,32px);margin:7px 0}
+.tela-back:disabled{opacity:.5}
+@media(max-width:760px){.admin-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body class="mode-cadastro">
@@ -110,26 +140,28 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(-
       <div class="lema">A arte que você veste</div>
     </header>
     <main id="form">
-      <p class="sub">Fotografe seu desenho, preencha os dados e concorra a um buquê.</p>
-      <label class="t" for="photo">Foto do desenho</label>
+      <p class="sub">Preencha seus dados para concorrer ao Marcador de Página e ao Buquê. A foto do desenho é opcional.</p>
+      <label class="t" for="photo">Foto do desenho <span class="optional">(opcional)</span></label>
       <label class="photo" id="photoBox">
-        <span id="photoText">Toque para tirar a foto</span>
+        <span id="photoText">Toque para fotografar seu desenho (opcional)</span>
         <img id="preview" alt="Prévia do seu desenho" hidden>
         <input type="file" accept="image/*" capture="environment" id="photo">
       </label>
+      <button type="button" class="remove-photo" id="removerFoto" hidden>Remover fotografia</button>
       <label class="t" for="nome">Nome</label>
       <input id="nome" type="text" maxlength="60" autocomplete="name">
       <label class="t" for="cel">Celular (com DDD)</label>
       <input id="cel" type="tel" maxlength="16" inputmode="tel" autocomplete="tel" placeholder="(21) 99999-9999">
-      <label class="check"><input type="checkbox" id="lgpd"><span>Concordo com a exibição pública do meu nome e desenho no sorteio e com o uso reservado do celular somente para contato sobre o prêmio.</span></label>
-      <button type="button" class="primary" id="enviar">Participar do sorteio</button>
+      <label class="check"><input type="checkbox" id="lgpd"><span>Autorizo a utilização do meu nome e, se enviada, da foto do desenho na apresentação dos sorteios; meu celular será usado apenas para identificação e contato sobre os prêmios.</span></label>
+      <button type="button" class="primary" id="enviar">Participar dos sorteios</button>
       <div class="msg" id="msg" role="alert"></div>
     </main>
     <main class="ok" id="done" hidden>
       <svg class="big" aria-hidden="true"><use href="#dahlia"></use></svg>
       <h2>Inscrição confirmada, <span id="quem"></span>!</h2>
-      <div class="lema">Seu desenho já está no sorteio.</div>
-      <p class="sub">Acompanhe o resultado no telão.</p>
+      <div class="lema">Você já está concorrendo aos dois prêmios!</div>
+      <p class="sub">Marcador de Página e Buquê Made By Camis. Acompanhe o telão!</p>
+      <p class="consent-note">A equipe utiliza os dados somente na feira; não os repassamos a terceiros. Para solicitar a exclusão, procure a organização.</p>
     </main>
     <button type="button" class="organizacao-link" id="abrirEquipe">Área da organização</button>
   </div>
@@ -154,30 +186,43 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(-
 </section>
 <section id="viewPainel" class="view" aria-label="Painel da organização">
   <div class="admin-wrap">
-    <div class="admin-actions">
-      <button type="button" data-back>← Cadastro</button>
-      <button type="button" id="sairEquipe">Sair da equipe</button>
-    </div>
+    <div class="admin-actions"><button type="button" data-back>← Cadastro</button><button type="button" id="sairEquipe">Sair da equipe</button></div>
     <div class="admin-header">
       <img class="flores" id="logoPainel" alt="Flores da Made by Camis">
-      <h1>Painel do sorteio</h1>
-      <p class="subtitle">Buquê Made by Camis • Feira de Marketing</p>
+      <h1>Painel de sorteios</h1>
+      <p class="subtitle">Marcador de Página e Buquê • Feira de Marketing</p>
     </div>
     <div class="admin-grid">
       <div class="admin-card">
-        <h2>Inscrições recebidas</h2>
-        <div class="metric" id="totalPainel">—</div>
-        <p>Desenhos confirmados no Firebase, atualizados automaticamente.</p>
-        <h2 style="font-size:19px;margin-top:24px">Desenhos inscritos</h2>
+        <h2>Participantes inscritos</h2>
+        <div class="metric-line"><div class="metric" id="totalPainel">—</div><div class="metric-small" id="totalFotos">— com foto</div></div>
+        <p class="status-line" id="statusInscricoes">Conferindo as inscrições...</p>
+        <button type="button" id="alternarInscricoes" class="btn-encerrar" disabled>Encerrar inscrições</button>
+        <h2 style="font-size:19px;margin-top:24px">Participações recentes</h2>
         <div class="gallery" id="gallery"><p>Aguardando participantes...</p></div>
       </div>
       <div class="admin-card">
-        <h2>Controle do sorteio</h2>
-        <p>Faça um ensaio sem gravar resultado. Ao iniciar o sorteio oficial, o vencedor fica salvo no Firebase e não pode ser sorteado novamente pela página.</p>
-        <button type="button" id="abrirEnsaio" class="outline" disabled>Testar animação (ensaio)</button>
-        <button type="button" id="abrirOficial" class="primary" disabled>Realizar sorteio oficial</button>
-        <p id="resumoVencedor">Nenhum vencedor registrado.</p>
-        <p style="font-size:12px">Dica: para exibir no telão, pressione F11 no navegador do computador.</p>
+        <h2>Prêmios da feira</h2>
+        <p>Faça um ensaio sem registrar resultado ou sorteie oficialmente cada prêmio. Um participante só pode ganhar um dos dois.</p>
+        <div class="prize-card">
+          <div class="prize-title"><span>🎀 Marcador de Página</span><span id="statusMarcador" class="status-pill">Pendente</span></div>
+          <p class="prize-winner" id="vencedorMarcador">Nenhum vencedor sorteado.</p>
+          <div class="prize-actions">
+            <button type="button" id="ensaioMarcador" class="outline" disabled>Ensaio</button>
+            <button type="button" id="oficialMarcador" class="primary" disabled>Sortear</button>
+          </div>
+        </div>
+        <div class="prize-card">
+          <div class="prize-title"><span>💐 Buquê</span><span id="statusBuque" class="status-pill">Pendente</span></div>
+          <p class="prize-winner" id="vencedorBuque">Nenhum vencedor sorteado.</p>
+          <div class="prize-actions">
+            <button type="button" id="ensaioBuque" class="outline" disabled>Ensaio</button>
+            <button type="button" id="oficialBuque" class="primary" disabled>Sortear</button>
+          </div>
+        </div>
+        <p id="resumoPremios">Os resultados são registrados no Firebase.</p>
+        <details><summary style="font-size:14px;cursor:pointer;color:var(--red)">Histórico dos sorteios</summary><ol class="historico" id="historicoSorteios"><li>Ainda não há sorteios.</li></ol></details>
+        <p style="font-size:12px">Para projetar no telão, use F11 no navegador.</p>
       </div>
     </div>
     <div class="admin-message" id="erroPainel" role="alert"></div>
@@ -190,8 +235,9 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(-
   <div class="tela-indicador" id="indicadorEnsaio" hidden>MODO ENSAIO • sem resultado oficial</div>
   <img class="sorteio-flores" id="logoSorteio" alt="Flores Made by Camis">
   <h1 class="sorteio-titulo">Sorteio Made by <em>Camis</em></h1>
+  <div class="tela-premio" id="premioTela">Prêmio da feira</div>
   <div class="sorteio-count" id="count">Carregando participantes...</div>
-  <div class="stage" id="stage"><span>Os desenhos aparecem aqui</span></div>
+  <div class="stage" id="stage"><span>As participações aparecem aqui</span></div>
   <div class="sorteio-parab" id="parab"></div>
   <div class="sorteio-name" id="name"></div>
   <button type="button" class="tela-btn" id="btnSorteio" disabled>Sortear</button>
@@ -213,273 +259,301 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const auth = firebase.auth();
-// CONFIGURAÇÃO ÚNICA: substitua pelo e-mail da conta técnica criada no Firebase.
-// Ele NÃO aparece no formulário. A equipe digitará apenas a senha.
-// A senha NUNCA deve ser escrita no HTML, pois o GitHub Pages é público.
-const EMAIL_INTERNO_DA_EQUIPE = 'COLE_AQUI_O_EMAIL_CADASTRADO_NO_FIREBASE';
+// Identificador interno público: a senha nunca é publicada no GitHub.
+const EMAIL_INTERNO_DA_EQUIPE = 'raelmaciel79@gmail.com';
+const UID_EQUIPE = 'T7mlhh0c3ybm8blrxSYCRLzj8t12';
 const $ = id => document.getElementById(id);
-const resultadoRef = db.collection('sorteio').doc('resultado');
-let fotoData = null;
+const controleRef = db.collection('controle').doc('evento');
+const premios = {marcador:'Marcador de Página',buque:'Buquê Made By Camis'};
+const telas = {cadastro:'viewCadastro',login:'viewLogin',painel:'viewPainel',sorteio:'viewSorteio'};
+const estadoInicial = () => ({aberto:true, marcador:'',buque:'',historico:[]});
+let fotoData = '';
 let lista = [];
-let vencedor = null;
-let rodando = false;
-let modo = 'ensaio';
+let controle = estadoInicial();
 let usuarioEquipe = null;
-let unsubscribeParticipantes = null;
-let unsubscribeResultado = null;
-const nomesTelas = { cadastro:'viewCadastro', login:'viewLogin', painel:'viewPainel', sorteio:'viewSorteio' };
+let unsubscribeParticipantes = null, unsubscribeControle = null;
+let rodando = false, modo = 'ensaio', premioAtual = 'marcador';
+let carregouParticipantes = false, carregouControle = false;
 
-// O mesmo arquivo HTML contém cadastro, painel e telão, mantendo os fundos originais.
 function mostrarTela(tela) {
-  Object.entries(nomesTelas).forEach(([nome, id]) => $(id).classList.toggle('active', nome === tela));
-  document.body.className = 'mode-' + tela;
-  window.scrollTo(0,0);
+ Object.entries(telas).forEach(([nome,id]) => $(id).classList.toggle('active',nome===tela));
+ document.body.className='mode-'+tela;
+ window.scrollTo(0,0);
 }
-for (const id of ['logoLogin','logoPainel','logoSorteio']) $(id).src = $('logoCadastro').src;
-document.querySelectorAll('[data-back]').forEach(b => b.addEventListener('click', () => mostrarTela('cadastro')));
-$('abrirEquipe').addEventListener('click', () => mostrarTela(usuarioEquipe ? 'painel' : 'login'));
+for(const id of ['logoLogin','logoPainel','logoSorteio']) $(id).src=$('logoCadastro').src;
+document.querySelectorAll('[data-back]').forEach(b=>b.addEventListener('click',()=>mostrarTela('cadastro')));
+$('abrirEquipe').addEventListener('click',()=>mostrarTela(usuarioEquipe?'painel':'login'));
 
-// Cadastro: o celular fica em 'contatos' (privado), o nome e a imagem em 'participantes'.
+// === INSCRIÇÕES: celular como ID PRIVADO para evitar duplicidade automaticamente ===
 async function comprimir(file) {
-  if (!file.type.startsWith('image/')) throw new Error('Selecione uma foto válida.');
-  const url = URL.createObjectURL(file);
-  try {
-    const imagem = new Image();
-    await new Promise((ok, erro) => {imagem.onload = ok; imagem.onerror = erro; imagem.src = url;});
-    for (const limite of [800,700,600,500,400]) {
-      const escala = Math.min(1, limite/Math.max(imagem.width,imagem.height));
-      const canvas = document.createElement('canvas');
-      canvas.width = Math.max(1, Math.round(imagem.width * escala));
-      canvas.height = Math.max(1, Math.round(imagem.height * escala));
-      canvas.getContext('2d').drawImage(imagem,0,0,canvas.width,canvas.height);
-      for (const qualidade of [.65,.52,.40,.30]) {
-        const base64 = canvas.toDataURL('image/jpeg',qualidade);
-        if (base64.length <= 140000) return base64;
-      }
-    }
-    throw new Error('A foto ficou muito grande. Tire outra.');
-  } finally { URL.revokeObjectURL(url); }
-}
-$('photo').addEventListener('change', async e => {
-  const f = e.target.files?.[0]; if (!f) return;
-  $('msg').textContent = 'Preparando foto...';
-  try {
-    fotoData = await comprimir(f);
-    $('preview').src = fotoData;
-    $('preview').hidden = false;
-    $('photoText').hidden = true;
-    $('msg').textContent = '';
-  } catch (erro) {
-    fotoData = null; $('preview').hidden = true; $('photoText').hidden = false;
-    $('msg').textContent = erro.message || 'Não foi possível ler a foto.';
+ if(!file.type.startsWith('image/')) throw new Error('Escolha uma imagem válida.');
+ const url=URL.createObjectURL(file);
+ try {
+  const img=new Image();
+  await new Promise((resolve,reject)=>{img.onload=resolve;img.onerror=reject;img.src=url;});
+  for(const maxLado of [800,700,600,500,400]) {
+   const fator=Math.min(1,maxLado/Math.max(img.width,img.height));
+   const cv=document.createElement('canvas');
+   cv.width=Math.max(1,Math.round(img.width*fator));
+   cv.height=Math.max(1,Math.round(img.height*fator));
+   const ctx=cv.getContext('2d');
+   ctx.fillStyle='#fff';ctx.fillRect(0,0,cv.width,cv.height);
+   ctx.drawImage(img,0,0,cv.width,cv.height);
+   for(const qualidade of [.68,.54,.42,.30]){
+    const str=cv.toDataURL('image/jpeg',qualidade);
+    if(str.length<=140000) return str;
+   }
   }
-});
-$('cel').addEventListener('input', e => {
-  const d = e.target.value.replace(/\D/g,'').slice(0,11);
-  const corte = d.length > 10 ? 7 : 6;
-  e.target.value = d.length > 2
-    ? '('+d.slice(0,2)+') '+d.slice(2,corte)+(d.length>corte?'-'+d.slice(corte):'') : d;
-});
-async function hashCelular(celular) {
-  const bytes = new TextEncoder().encode('madebycamis-2026:'+celular);
-  const digest = await crypto.subtle.digest('SHA-256',bytes);
-  return [...new Uint8Array(digest)].map(x => x.toString(16).padStart(2,'0')).join('');
+  throw new Error('A fotografia é muito grande. Tente outra.');
+ } finally {URL.revokeObjectURL(url);}
 }
-$('enviar').addEventListener('click',async () => {
-  $('msg').textContent = '';
-  const nome = $('nome').value.trim().replace(/\s+/g,' ');
-  const celular = $('cel').value.replace(/\D/g,'');
-  if(!fotoData) return $('msg').textContent='Tire a foto do desenho.';
-  if(nome.length<2||nome.length>60) return $('msg').textContent='Informe seu nome.';
-  if(celular.length!==10&&celular.length!==11) return $('msg').textContent='Informe celular com DDD.';
-  if(!$('lgpd').checked) return $('msg').textContent='Marque a autorização para participar.';
-  $('enviar').disabled=true;
-  $('enviar').textContent='Enviando inscrição...';
-  try {
-    // Inscrições encerram automaticamente nas regras assim que houver sorteio oficial.
-    const hash=await hashCelular(celular);
-    const publico=db.collection('participantes').doc();
-    const privado=db.collection('contatos').doc(hash);
-    const data=firebase.firestore.FieldValue.serverTimestamp();
-    const lote=db.batch();
-    lote.set(publico,{nome,foto:fotoData,criadoEm:data});
-    lote.set(privado,{nome,celular,participanteId:publico.id,criadoEm:data});
-    await lote.commit();
-    $('quem').textContent=nome.split(' ')[0];
-    $('form').hidden=true; $('done').hidden=false;
-    window.scrollTo(0,0);
-  } catch(e) {
-    console.error('Erro na inscrição',e);
-    $('msg').textContent = e.code==='permission-denied'
-      ? 'Este celular já pode estar inscrito ou as inscrições foram encerradas. Procure a equipe.'
-      : 'Não foi possível enviar. Confira a internet e tente novamente.';
-  } finally {
-    $('enviar').disabled=false;
-    $('enviar').textContent='Participar do sorteio';
-  }
+function limparFoto(){fotoData='';$('photo').value='';$('preview').removeAttribute('src');$('preview').hidden=true;$('photoText').hidden=false;$('removerFoto').hidden=true;}
+$('removerFoto').addEventListener('click',limparFoto);
+$('photo').addEventListener('change',async event=>{
+ const f=event.target.files?.[0];if(!f)return;
+ $('msg').textContent='Preparando fotografia...';
+ try {
+  fotoData=await comprimir(f);
+  $('preview').src=fotoData;$('preview').hidden=false;$('photoText').hidden=true;$('removerFoto').hidden=false;
+  $('msg').textContent='';
+ } catch(e){limparFoto();$('msg').textContent=e.message||'Não foi possível processar a foto.';}
+});
+$('cel').addEventListener('input',event=>{
+ const d=event.target.value.replace(/\D/g,'').slice(0,11);
+ if(d.length<=2)event.target.value=d;
+ else if(d.length<=6)event.target.value=`(${d.slice(0,2)}) ${d.slice(2)}`;
+ else event.target.value=`(${d.slice(0,2)}) ${d.slice(2,d.length===11?7:6)}-${d.slice(d.length===11?7:6)}`;
+});
+$('enviar').addEventListener('click',async()=>{
+ $('msg').textContent='';
+ const nome=$('nome').value.trim().replace(/\s+/g,' ');
+ let celular=$('cel').value.replace(/\D/g,'');
+ if(celular.startsWith('55')&&(celular.length===12||celular.length===13))celular=celular.slice(2);
+ if(nome.length<2||nome.length>60){$('msg').textContent='Informe seu nome completo.';return;}
+ if(!/^[1-9][0-9]{9,10}$/.test(celular)){$('msg').textContent='Informe seu celular com DDD.';return;}
+ if(!$('lgpd').checked){$('msg').textContent='Marque a autorização para participar.';return;}
+ $('enviar').disabled=true;$('enviar').textContent='Enviando inscrição...';
+ try {
+  await db.collection('participantes').doc(celular).set({
+   nome,foto:fotoData,criadoEm:firebase.firestore.FieldValue.serverTimestamp()
+  });
+  $('quem').textContent=nome.split(' ')[0];
+  $('form').hidden=true;$('done').hidden=false;
+  window.scrollTo(0,0);
+ } catch(e){
+  console.error('Inscrição não concluída',e);
+  $('msg').textContent=e.code==='permission-denied'
+   ? 'Este celular já pode estar cadastrado ou as inscrições foram encerradas. Procure a equipe.'
+   : 'Falha ao enviar. Confira a internet e tente novamente.';
+ } finally {$('enviar').disabled=false;$('enviar').textContent='Participar dos sorteios';}
 });
 
-// A tela administrativa exige login real no Firebase Authentication.
-auth.onAuthStateChanged(user => {
-  usuarioEquipe=user;
-  if(user) {
-    assinarDados();
-    if($('viewLogin').classList.contains('active')) mostrarTela('painel');
-  } else {
-    encerrarAssinaturas();
-    if($('viewPainel').classList.contains('active')||$('viewSorteio').classList.contains('active')) mostrarTela('login');
-  }
+// === AUTENTICAÇÃO: APENAS SENHA VISÍVEL, VALIDADA PELO FIREBASE ===
+auth.onAuthStateChanged(async user=>{
+ if(user && user.uid!==UID_EQUIPE){
+  await auth.signOut();return;
+ }
+ usuarioEquipe=user;
+ if(user){assinarDados();if($('viewLogin').classList.contains('active'))mostrarTela('painel');}
+ else {encerrarAssinaturas();if($('viewPainel').classList.contains('active')||$('viewSorteio').classList.contains('active'))mostrarTela('login');}
 });
-$('formLogin').addEventListener('submit',async event => {
-  event.preventDefault();
-  $('erroLogin').textContent='';
-  if (!EMAIL_INTERNO_DA_EQUIPE.includes('@')) {
-    $('erroLogin').textContent='Acesso não configurado. A equipe deve definir o e-mail interno no arquivo index.html.';
-    return;
-  }
-  $('entrarEquipe').disabled=true;
-  try {
-    // O Firebase valida a senha; não existe senha secreta exposta no HTML.
-    await auth.signInWithEmailAndPassword(EMAIL_INTERNO_DA_EQUIPE,$('senhaEquipe').value);
-    $('senhaEquipe').value='';
-    mostrarTela('painel');
-  } catch(e) {
-    console.error('Falha no acesso à organização',e.code || e);
-    $('erroLogin').textContent='Não foi possível entrar. Confira a senha ou procure a organização.';
-  } finally {$('entrarEquipe').disabled=false;}
+$('formLogin').addEventListener('submit',async event=>{
+ event.preventDefault();$('erroLogin').textContent='';$('entrarEquipe').disabled=true;
+ try {
+  const cred=await auth.signInWithEmailAndPassword(EMAIL_INTERNO_DA_EQUIPE,$('senhaEquipe').value);
+  if(cred.user.uid!==UID_EQUIPE)throw new Error('Usuário não autorizado.');
+  $('senhaEquipe').value='';mostrarTela('painel');
+ }catch(e){console.error('Falha no acesso',e.code||e);$('erroLogin').textContent='Senha incorreta ou acesso não autorizado. Confira também a conexão.';}
+ finally{$('entrarEquipe').disabled=false;}
 });
-$('sairEquipe').addEventListener('click',async () => {await auth.signOut();mostrarTela('cadastro');});
+$('sairEquipe').addEventListener('click',async()=>{await auth.signOut();mostrarTela('cadastro');});
 
+// Apenas a equipe autenticada pode ler a coleção: nomes, telefones e fotos não são públicos.
 function encerrarAssinaturas(){
-  if(unsubscribeParticipantes){unsubscribeParticipantes();unsubscribeParticipantes=null;}
-  if(unsubscribeResultado){unsubscribeResultado();unsubscribeResultado=null;}
-  lista=[];vencedor=null;atualizarPainel();
+ if(unsubscribeParticipantes){unsubscribeParticipantes();unsubscribeParticipantes=null;}
+ if(unsubscribeControle){unsubscribeControle();unsubscribeControle=null;}
+ carregouParticipantes=false;carregouControle=false;lista=[];controle=estadoInicial();atualizarPainel();
 }
 function assinarDados(){
-  if(unsubscribeParticipantes) return;
-  unsubscribeParticipantes=db.collection('participantes').onSnapshot(snap => {
-    lista=snap.docs.map(doc=>({id:doc.id,...doc.data()}));
-    atualizarPainel();
-  },erro => {
-    console.error('Erro na lista',erro);
-    $('erroPainel').textContent='Não foi possível carregar as inscrições. Confira as regras do Firestore.';
+ if(unsubscribeParticipantes)return;
+ unsubscribeParticipantes=db.collection('participantes').onSnapshot(s=>{
+  lista=s.docs.map(d=>({id:d.id,...d.data()})).filter(p=>typeof p.nome==='string');
+  carregouParticipantes=true;atualizarPainel();
+ },e=>{$('erroPainel').textContent='Erro ao carregar participantes. Confira as regras do Firestore.';console.error(e);});
+ unsubscribeControle=controleRef.onSnapshot(s=>{
+  controle=s.exists?{...estadoInicial(),...s.data()}:estadoInicial();
+  carregouControle=true;atualizarPainel();
+  if(!rodando && $('viewSorteio').classList.contains('active') && modo==='oficial'){
+   const id=controle[premioAtual];
+   if(id){const p=lista.find(x=>x.id===id);if(p)mostrarParticipante(p,true);$('btnSorteio').textContent='Voltar ao painel';$('btnSorteio').disabled=true;}
+  }
+ },e=>{$('erroPainel').textContent='Não foi possível carregar os resultados.';console.error(e);});
+}
+function listaElegivel(premio,excluirAtual=false){
+ const outro=premio==='marcador'?'buque':'marcador';
+ const bloqueados=new Set([controle[outro]]);
+ if(excluirAtual && controle[premio]) bloqueados.add(controle[premio]);
+ return lista.filter(p=>!bloqueados.has(p.id));
+}
+function fallback(nome){
+ const wrap=document.createElement('div');wrap.className='photo-fallback';
+ const flor=document.createElementNS('http://www.w3.org/2000/svg','svg');
+ const use=document.createElementNS('http://www.w3.org/2000/svg','use');
+ use.setAttribute('href','#dahlia');flor.append(use);
+ const msg=document.createElement('span');msg.textContent='Made By Camis';
+ wrap.append(flor,msg);wrap.setAttribute('aria-label','Participação de '+nome+' sem fotografia');
+ return wrap;
+}
+function visualParticipante(p){
+ if(p.foto && typeof p.foto==='string' && p.foto.startsWith('data:image/')){
+  const img=document.createElement('img');img.src=p.foto;img.alt='Desenho de '+p.nome;return img;
+ }
+ return fallback(p.nome);
+}
+function atualizarPainel(){
+ $('totalPainel').textContent=carregouParticipantes?lista.length:'—';
+ $('totalFotos').textContent=lista.filter(p=>!!p.foto).length+' com fotografia';
+ $('count').textContent=lista.length+(lista.length===1?' participante inscrito':' participantes inscritos');
+ $('statusInscricoes').textContent=controle.aberto?'Inscrições abertas • Cadastro pelo QR Code':'Inscrições encerradas pela organização';
+ $('alternarInscricoes').textContent=controle.aberto?'Encerrar inscrições':'Reabrir inscrições';
+ $('alternarInscricoes').disabled=!usuarioEquipe||!carregouControle||rodando;
+ for(const [p,stub] of [['marcador','Marcador'],['buque','Buque']]){
+  const win=lista.find(x=>x.id===controle[p]);
+  $('vencedor'+stub).textContent=controle[p]?'Vencedor: '+(win?.nome||'Participante cadastrado'):'Nenhum vencedor sorteado.';
+  $('status'+stub).textContent=controle[p]?'Concluído':'Pendente';
+  $('status'+stub).classList.toggle('done',!!controle[p]);
+  const pode=!!usuarioEquipe&&carregouParticipantes&&carregouControle&&!rodando;
+  $('ensaio'+stub).disabled=!pode||listaElegivel(p).length<1;
+  $('oficial'+stub).disabled=!pode||listaElegivel(p,!!controle[p]).length<1;
+  $('oficial'+stub).textContent=controle[p]?'Sortear novamente':'Sortear oficialmente';
+ }
+ $('resumoPremios').textContent='Os dois ganhadores serão diferentes. Resultados e histórico permanecem salvos no Firebase.';
+ const gallery=$('gallery');gallery.replaceChildren();
+ if(!lista.length){const p=document.createElement('p');p.textContent='Nenhum participante cadastrado.';gallery.append(p);}
+ else lista.slice(-24).reverse().forEach(p=>{
+  const card=document.createElement('div');card.className='gallery-item';
+  const nm=document.createElement('div');nm.textContent=p.nome;
+  card.append(visualParticipante(p),nm);gallery.append(card);
+ });
+ const hist=$('historicoSorteios');hist.replaceChildren();
+ const registros=Array.isArray(controle.historico)?controle.historico:[];
+ if(!registros.length){const li=document.createElement('li');li.textContent='Ainda não há sorteios oficiais.';hist.append(li);}
+ else registros.slice(-20).reverse().forEach(h=>{
+  const li=document.createElement('li');
+  const achado=lista.find(x=>x.id===h.participanteId);
+  li.textContent=(h.acao==='refazer'?'Novo sorteio':'Sorteio')+' — '+(premios[h.premio]||h.premio)+': '+(achado?.nome||'ID '+h.participanteId)+' ('+(h.quando||'')+')';
+  hist.append(li);
+ });
+}
+
+// Encerra ou reabre inscrições. Prêmios não são apagados nessa operação.
+$('alternarInscricoes').addEventListener('click',async()=>{
+ if(!usuarioEquipe||rodando)return;
+ const proximo=!controle.aberto;
+ if(!confirm(proximo?'Reabrir inscrições para novos participantes?':'Encerrar inscrições agora?'))return;
+ $('alternarInscricoes').disabled=true;$('erroPainel').textContent='';
+ try {
+  await db.runTransaction(async tx=>{
+   const doc=await tx.get(controleRef);
+   const atual=doc.exists?{...estadoInicial(),...doc.data()}:estadoInicial();
+   tx.set(controleRef,{...atual,aberto:!atual.aberto,atualizadoEm:firebase.firestore.FieldValue.serverTimestamp()});
   });
-  unsubscribeResultado=resultadoRef.onSnapshot(snap => {
-    vencedor=snap.exists ? snap.data().participanteId : null;
-    atualizarPainel();
-    if (!rodando && $('viewSorteio').classList.contains('active') && modo==='oficial' && vencedor) {
-      const p=lista.find(x=>x.id===vencedor);
-      if(p) mostrarParticipante(p,true);
-      $('btnSorteio').textContent='Sorteio encerrado';$('btnSorteio').disabled=true;
-    }
-  },erro => console.error('Não foi possível verificar o resultado',erro));
-}
-function atualizarPainel() {
-  $('totalPainel').textContent=lista.length;
-  $('count').textContent=lista.length+(lista.length===1?' participante':' participantes');
-  $('abrirEnsaio').disabled=lista.length===0||rodando;
-  $('abrirOficial').disabled=lista.length===0||!!vencedor||rodando;
-  const ganhador=lista.find(x=>x.id===vencedor);
-  $('resumoVencedor').textContent=vencedor
-    ? 'Vencedor oficial: '+(ganhador?.nome||'Participante registrado no banco')
-    : 'Nenhum vencedor registrado.';
-  const gallery=$('gallery');gallery.replaceChildren();
-  if(lista.length===0){const p=document.createElement('p');p.textContent='Nenhum desenho cadastrado.';gallery.append(p);}
-  else lista.slice(-24).reverse().forEach(p=>{
-    const card=document.createElement('div');card.className='gallery-item';
-    const img=document.createElement('img');img.src=p.foto;img.alt='Desenho de '+p.nome;
-    const nome=document.createElement('div');nome.textContent=p.nome;
-    card.append(img,nome);gallery.append(card);
-  });
-}
-$('abrirEnsaio').addEventListener('click',()=>abrirTelaSorteio('ensaio'));
-$('abrirOficial').addEventListener('click',()=>abrirTelaSorteio('oficial'));
-function abrirTelaSorteio(tipo){
-  if(!usuarioEquipe || rodando) return;
-  modo=tipo;
-  $('indicadorEnsaio').hidden=tipo!=='ensaio';
-  $('erroSorteio').textContent='';
-  $('stage').classList.remove('win');
-  $('stage').replaceChildren(document.createTextNode('Os desenhos aparecem aqui'));
-  $('name').textContent='';
-  $('parab').textContent=tipo==='ensaio'?'Simulação — não registra vencedor':'';
-  $('btnSorteio').textContent=tipo==='ensaio'?'Testar animação':vencedor?'Sorteio encerrado':'Sortear buquê';
-  $('btnSorteio').disabled=lista.length===0||(tipo==='oficial'&&!!vencedor);
-  mostrarTela('sorteio');
-  if(tipo==='oficial'&&vencedor){const p=lista.find(x=>x.id===vencedor);if(p)mostrarParticipante(p,true);}
-}
-$('voltarPainel').addEventListener('click',()=> {if(!rodando)mostrarTela('painel');});
-function mostrarParticipante(p,final){
-  const img=document.createElement('img');img.alt='Desenho de '+p.nome;img.src=p.foto;
-  $('stage').replaceChildren(img);$('stage').classList.toggle('win',!!final);
-  $('name').textContent=p.nome; $('name').classList.toggle('run',!final);
-  $('parab').textContent=final ? (modo==='ensaio'?'Resultado de ensaio — não vale como sorteio':'Parabéns!') : '';
-}
+ }catch(e){console.error(e);$('erroPainel').textContent='Não foi possível alterar as inscrições. Confira as regras.';}
+ finally{atualizarPainel();}
+});
+
+// === SORTEIOS: duas premiações, resultados duráveis e alteração transacional ===
 function aleatorio(n){
-  if(n<1)throw new Error('Lista vazia');
-  const limite=Math.floor(4294967296/n)*n;
-  const v=new Uint32Array(1);
-  do{crypto.getRandomValues(v);}while(v[0]>=limite);
-  return v[0]%n;
+ if(n<1)throw new Error('Nenhum participante elegível.');
+ const max=4294967296,limite=Math.floor(max/n)*n;
+ const valores=new Uint32Array(1);
+ do{crypto.getRandomValues(valores);}while(valores[0]>=limite);
+ return valores[0]%n;
+}
+for(const [premio,stub] of [['marcador','Marcador'],['buque','Buque']]){
+ $('ensaio'+stub).addEventListener('click',()=>abrirTelaSorteio('ensaio',premio));
+ $('oficial'+stub).addEventListener('click',()=>abrirTelaSorteio('oficial',premio));
+}
+function abrirTelaSorteio(tipo,premio){
+ if(!usuarioEquipe||rodando)return;
+ modo=tipo;premioAtual=premio;
+ $('indicadorEnsaio').hidden=tipo!=='ensaio';
+ $('premioTela').textContent=premios[premio];
+ $('erroSorteio').textContent='';
+ $('stage').classList.remove('win');
+ $('stage').replaceChildren(document.createTextNode('As participações aparecem aqui'));
+ $('name').textContent='';
+ $('parab').textContent=tipo==='ensaio'?'Simulação — não registra resultado':'';
+ const atual=controle[premio];
+ $('btnSorteio').textContent=tipo==='ensaio'?'Testar animação':atual?'Sortear novamente':'Sortear oficialmente';
+ $('btnSorteio').disabled=listaElegivel(premio,tipo==='oficial'&&!!atual).length===0;
+ mostrarTela('sorteio');
+}
+$('voltarPainel').addEventListener('click',()=>{if(!rodando)mostrarTela('painel');});
+function mostrarParticipante(p,final){
+ $('stage').replaceChildren(visualParticipante(p));
+ $('stage').classList.toggle('win',!!final);
+ $('name').textContent=p.nome;$('name').classList.toggle('run',!final);
+ $('parab').textContent=final?(modo==='ensaio'?'Resultado do ensaio — não é oficial':'Parabéns!'):'';
 }
 $('btnSorteio').addEventListener('click',async()=>{
-  if(!usuarioEquipe||lista.length===0||rodando||(modo==='oficial'&&vencedor))return;
-  if(modo==='oficial'&&!window.confirm('ATENÇÃO: iniciar o sorteio OFICIAL do único buquê? O resultado será registrado e não poderá ser refeito pelo site.')) return;
-  const participantes=[...lista];
-  const escolhido=participantes[aleatorio(participantes.length)];
-  rodando=true;$('btnSorteio').disabled=true;$('voltarPainel').disabled=true;
-  if(modo==='oficial'){
-    $('btnSorteio').textContent='Registrando o resultado...';
-    try {
-      await db.runTransaction(async transacao=>{
-        const antigo=await transacao.get(resultadoRef);
-        if(antigo.exists)throw new Error('O sorteio oficial já foi realizado.');
-        transacao.set(resultadoRef,{participanteId:escolhido.id,criadoEm:firebase.firestore.FieldValue.serverTimestamp()});
-      });
-      vencedor=escolhido.id;
-    } catch(erro){
-      console.error('Falha no registro do sorteio',erro);
-      $('erroSorteio').textContent=erro.code==='permission-denied'
-        ? 'Sem permissão para o sorteio oficial. Confira o UID do administrador nas regras do Firebase.'
-        : 'Não foi possível registrar o sorteio. Confira a internet e se já existe um vencedor.';
-      rodando=false;$('voltarPainel').disabled=false;
-      $('btnSorteio').disabled=!!vencedor;$('btnSorteio').textContent='Sortear buquê';
-      return;
-    }
+ if(!usuarioEquipe||rodando||!carregouControle||!carregouParticipantes)return;
+ const premio=premioAtual,oficial=modo==='oficial';
+ const tinhaVencedor=!!controle[premio];
+ const participantes=listaElegivel(premio,oficial&&tinhaVencedor);
+ if(!participantes.length){$('erroSorteio').textContent='Não há participantes elegíveis para este sorteio.';return;}
+ if(oficial&&!confirm(tinhaVencedor?
+  'Refazer o sorteio de '+premios[premio]+'? O vencedor anterior perderá este prêmio e a alteração será registrada.':
+  'Confirmar sorteio OFICIAL de '+premios[premio]+'?'))return;
+ rodando=true;$('btnSorteio').disabled=true;$('voltarPainel').disabled=true;
+ let escolhido=participantes[aleatorio(participantes.length)];
+ if(oficial){
+  $('btnSorteio').textContent='Registrando resultado...';
+  try {
+   await db.runTransaction(async tx=>{
+    const snap=await tx.get(controleRef);
+    const cfg=snap.exists?{...estadoInicial(),...snap.data()}:estadoInicial();
+    const outro=premio==='marcador'?'buque':'marcador';
+    if(cfg[outro]===escolhido.id||cfg[premio]===escolhido.id)throw new Error('O candidato já é vencedor. Tente novamente.');
+    const docPart=await tx.get(db.collection('participantes').doc(escolhido.id));
+    if(!docPart.exists)throw new Error('Participante não encontrado no Firebase.');
+    const historico=(Array.isArray(cfg.historico)?cfg.historico:[]).slice(-49);
+    historico.push({acao:cfg[premio]?'refazer':'sortear',premio,participanteId:escolhido.id,anteriorId:cfg[premio]||'',quando:new Date().toLocaleString('pt-BR')});
+    tx.set(controleRef,{...cfg,[premio]:escolhido.id,historico,atualizadoEm:firebase.firestore.FieldValue.serverTimestamp()});
+   });
+  }catch(e){
+   console.error('Sorteio não registrado',e);
+   $('erroSorteio').textContent=e.message||'Falha ao salvar o resultado. Tente novamente.';
+   rodando=false;$('voltarPainel').disabled=false;$('btnSorteio').disabled=false;
+   $('btnSorteio').textContent=tinhaVencedor?'Sortear novamente':'Sortear oficialmente';return;
   }
-  let passo=0,espera=55;
-  $('btnSorteio').textContent='Sorteando...';
-  (function tick(){
-    if(passo>=34){
-      mostrarParticipante(escolhido,true);confete();rodando=false;
-      $('voltarPainel').disabled=false;
-      $('btnSorteio').disabled=modo==='oficial';
-      $('btnSorteio').textContent=modo==='ensaio'?'Testar novamente':'Sorteio encerrado';
-      atualizarPainel();
-      return;
-    }
-    mostrarParticipante(participantes[aleatorio(participantes.length)],false);
-    passo++;if(passo>19)espera+=18;
-    setTimeout(tick,espera);
-  })();
+ }
+ let passo=0,intervalo=48;
+ $('btnSorteio').textContent='Sorteando...';
+ (function tick(){
+  if(passo>=38){
+   mostrarParticipante(escolhido,true);confete();rodando=false;
+   $('voltarPainel').disabled=false;
+   $('btnSorteio').disabled=oficial;
+   $('btnSorteio').textContent=oficial?'Resultado registrado':'Testar novamente';
+   atualizarPainel();return;
+  }
+  mostrarParticipante(participantes[aleatorio(participantes.length)],false);
+  passo++;if(passo>23)intervalo+=21;
+  setTimeout(tick,intervalo);
+ })();
 });
 function confete(){
-  const c=$('fx'),ctx=c.getContext('2d');
-  c.width=window.innerWidth;c.height=window.innerHeight;
-  const cores=['#eba8a0','#faf5e8','#d8625a','#a8bd3a','#f3c969'];
-  const pecas=Array.from({length:180},()=>({
-    x:Math.random()*c.width,y:-20-Math.random()*c.height*.5,
-    vx:(Math.random()-.5)*4,vy:3+Math.random()*5,
-    s:6+Math.random()*8,r:Math.random()*6,cor:cores[Math.floor(Math.random()*cores.length)]
-  }));
-  let t=0;
-  (function frame(){
-    ctx.clearRect(0,0,c.width,c.height);
-    pecas.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.r+=.1;
-      ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.r);ctx.fillStyle=p.cor;
-      ctx.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);ctx.restore();});
-    if(++t<260)requestAnimationFrame(frame);else ctx.clearRect(0,0,c.width,c.height);
-  })();
+ const c=$('fx'),ctx=c.getContext('2d');
+ c.width=innerWidth;c.height=innerHeight;
+ const cores=['#eba8a0','#faf5e8','#d8625a','#a8bd3a','#f3c969'];
+ const pecas=Array.from({length:160},()=>({x:Math.random()*c.width,y:-20-Math.random()*c.height*.5,vx:(Math.random()-.5)*4,vy:3+Math.random()*5,s:6+Math.random()*8,r:Math.random()*6,cor:cores[aleatorio(cores.length)]}));
+ let t=0;
+ (function frame(){
+  ctx.clearRect(0,0,c.width,c.height);
+  pecas.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.r+=.1;ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.r);ctx.fillStyle=p.cor;ctx.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);ctx.restore();});
+  if(++t<240)requestAnimationFrame(frame);else ctx.clearRect(0,0,c.width,c.height);
+ })();
 }
 </script>
 </body>
